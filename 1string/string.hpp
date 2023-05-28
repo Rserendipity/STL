@@ -104,6 +104,16 @@ namespace cjj
 		{
 			return !(*this == s);
 		}
+		string& operator+=(char ch)
+		{
+			insert(_size, ch);
+			return *this;
+		}
+		string& operator+=(const char* str)
+		{
+			insert(_size, str);
+			return *this;
+		}
 
 		// 成员函数
 		size_t size() const
@@ -159,24 +169,26 @@ namespace cjj
 
 		void push_back(char ch)
 		{
-			if (_size + 1 > _capacity)
-			{
-				reserve(_capacity * 2);
-			}
-			_buffer[_size] = ch;
-			_size++;
-			_buffer[_size] = '\0';
+//			if (_size + 1 > _capacity)
+//			{
+//				reserve(_capacity * 2);
+//			}
+//			_buffer[_size] = ch;
+//			_size++;
+//			_buffer[_size] = '\0';
+			insert(_size, ch);
 		}
 
 		void append(const char* str)
 		{
-			size_t len = strlen(str);
-			if (_size + len > _capacity)
-			{
-				reserve(_size + len);
-			}
-			strcpy(_buffer + _size, str);
-			_size += len;
+//			size_t len = strlen(str);
+//			if (_size + len > _capacity)
+//			{
+//				reserve(_size + len);
+//			}
+//			strcpy(_buffer + _size, str);
+//			_size += len;
+			insert(_size, str);
 		}
 
 		void insert(size_t pos, char ch)
@@ -184,7 +196,7 @@ namespace cjj
 			assert(pos <= _size);
 			if (_size + 1 > _capacity)
 			{
-				reserve(2*_capacity);
+				reserve(2 * _capacity);
 			}
 
 			size_t end = _size + 1;
@@ -220,15 +232,24 @@ namespace cjj
 
 		void erase(size_t pos, size_t n = npos)
 		{
-
+			if (n == npos || pos + n > _size)
+			{
+				_size = pos;
+				_buffer[_size] = '\0';
+			}
+			else
+			{
+				memmove(_buffer + pos, _buffer + n + pos, _size - pos);
+				_size -= n;
+			}
 		}
+
+		const static size_t npos;
 
 	 private:
 		char* _buffer;
 		size_t _size;
 		size_t _capacity;
-
-		const static size_t npos;
 	};
 	const size_t string::npos = -1;
 
@@ -296,6 +317,21 @@ namespace cjj
 		s1.insert(0, "RRR");
 
 		std::cout << s1.c_str() << std::endl;
+
+	}
+
+	void test5()
+	{
+		string s = "xxxx";
+
+		s += "123";
+		std::cout << s.c_str() << std::endl;
+		s.erase(2, 3);
+		std::cout << s.c_str() << std::endl;
+		s.erase(3, string::npos);
+		std::cout << s.c_str() << std::endl;
+		s.erase(1);
+		std::cout << s.c_str() << std::endl;
 
 	}
 }
